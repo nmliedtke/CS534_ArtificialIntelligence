@@ -1,0 +1,191 @@
+<html>
+<head>
+<title>Question2.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #000000;}
+.s1 { color: #0000ff;}
+.s2 { color: #808080; font-style: italic;}
+.s3 { color: #008080; font-weight: bold;}
+.s4 { color: #000080; font-weight: bold;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Question2.py</font>
+</center></td></tr></table>
+<pre>performanceMeasure = [<span class="s1">0</span>,<span class="s1">0</span>,<span class="s1">0</span>,<span class="s1">0</span>,<span class="s1">0</span>,<span class="s1">0</span>,<span class="s1">0</span>,<span class="s1">0</span>]
+expectedPerformance = -<span class="s1">999</span>
+
+<span class="s2">#first array is location, clean/dirty for sqaure A and second array is square B</span>
+percept = [<span class="s3">&quot;null&quot;</span>, <span class="s3">&quot;null&quot;</span>]
+environmentState = [<span class="s3">&quot;null&quot;</span>, <span class="s3">&quot;null&quot;</span>]
+<span class="s4">def </span>resetAgent():
+
+    expectedPerformance = -<span class="s1">999</span>
+    environmentState = [<span class="s3">&quot;null&quot;</span>, <span class="s3">&quot;null&quot;</span>]
+<span class="s4">def </span>initialPercept(envState, location):
+    status = <span class="s3">&quot;null&quot;</span>
+    <span class="s4">if </span>location == <span class="s3">&quot;B&quot;</span>:
+        status = envState[<span class="s1">1</span>]
+    <span class="s4">else</span>:
+        status = envState[<span class="s1">0</span>]
+    percept = [location,status]
+    <span class="s4">return </span>percept
+
+
+<span class="s4">def </span>agentFunction(percept):
+    action = <span class="s3">&quot;null&quot;</span>
+    <span class="s4">if </span>percept[<span class="s1">1</span>] == <span class="s3">&quot;Dirty&quot;</span>:
+        action = <span class="s3">&quot;Suck&quot;</span>
+    <span class="s4">else</span>:
+        <span class="s4">if </span>percept[<span class="s1">0</span>] == <span class="s3">&quot;A&quot;</span>:
+            action = <span class="s3">&quot;Right&quot;</span>
+        <span class="s4">else</span>:
+            action = <span class="s3">&quot;Left&quot;</span>
+    <span class="s4">return </span>action
+
+<span class="s4">def </span>updatePerformanceMeasure(envState, performanceMeasure):
+    <span class="s4">if </span>envState[<span class="s1">0</span>] == <span class="s3">&quot;Clean&quot;</span>:
+        performanceMeasure += <span class="s1">1</span>
+    <span class="s4">if </span>envState[<span class="s1">1</span>] == <span class="s3">&quot;Clean&quot;</span>:
+        performanceMeasure += <span class="s1">1</span>
+    <span class="s4">return </span>performanceMeasure
+
+<span class="s4">def </span>updateEnvironment(envState, percept, action, performanceMeasure):
+    AorB = -<span class="s1">99</span>
+    <span class="s4">if </span>percept[<span class="s1">0</span>] == <span class="s3">&quot;A&quot;</span>:
+        AorB = <span class="s1">0</span>
+    <span class="s4">else</span>:
+        AorB = <span class="s1">1</span>
+    squareState = envState[AorB]
+
+    <span class="s4">if </span>action == <span class="s3">&quot;Suck&quot;</span>:
+        squareState = <span class="s3">&quot;Clean&quot;</span>
+        percept[<span class="s1">1</span>] = squareState
+    <span class="s4">if </span>action == <span class="s3">&quot;Right&quot;</span>:
+        percept[<span class="s1">0</span>] = <span class="s3">&quot;B&quot; </span><span class="s2"># update next perception if moving</span>
+        percept[<span class="s1">1</span>] = envState[<span class="s1">1</span>]  <span class="s2"># update next perception of clean/dirty</span>
+    <span class="s4">if </span>action == <span class="s3">&quot;Left&quot;</span>:
+        percept[<span class="s1">0</span>] = <span class="s3">&quot;A&quot;</span>
+        percept[<span class="s1">1</span>] = envState[<span class="s1">0</span>]  <span class="s2"># update next perception of clean/dirty</span>
+
+    envState[AorB] = squareState
+
+
+    performanceMeasure = updatePerformanceMeasure(envState,performanceMeasure)
+    <span class="s4">return </span>[envState, percept, performanceMeasure]
+num = <span class="s1">0</span>
+
+print(<span class="s3">&quot;Testing agent for 1000 steps with envState (clean clean) and robot in A&quot;</span>)
+resetAgent()
+environmentState = [<span class="s3">&quot;Clean&quot;</span>, <span class="s3">&quot;Clean&quot;</span>]
+percept = initialPercept(environmentState, <span class="s3">&quot;A&quot;</span>)
+print(<span class="s3">&quot;initial perception: &quot; </span>+ str(percept))
+
+<span class="s4">for </span>x <span class="s4">in </span>range(<span class="s1">0</span>,<span class="s1">1000</span>):
+    action = agentFunction(percept)
+    [envState, percept, performanceMeasure[num]] = updateEnvironment(environmentState,percept,action,performanceMeasure[num])
+print(<span class="s3">&quot;Final Performance Measure: &quot; </span>+ str(performanceMeasure[num]) + <span class="s3">&quot;</span><span class="s4">\n</span><span class="s3">&quot; </span>)
+num += <span class="s1">1</span>
+
+print(<span class="s3">&quot;Testing agent for 1000 steps with envState (clean Dirty) and robot in A&quot;</span>)
+resetAgent()
+environmentState = [<span class="s3">&quot;Clean&quot;</span>, <span class="s3">&quot;Dirty&quot;</span>]
+percept = initialPercept(environmentState, <span class="s3">&quot;A&quot;</span>)
+print(<span class="s3">&quot;initial perception: &quot; </span>+ str(percept))
+
+<span class="s4">for </span>x <span class="s4">in </span>range(<span class="s1">0</span>,<span class="s1">1000</span>):
+    action = agentFunction(percept)
+    [envState, percept, performanceMeasure[num]] = updateEnvironment(environmentState,percept,action,performanceMeasure[num])
+print(<span class="s3">&quot;Final Performance Measure: &quot; </span>+ str(performanceMeasure[num]) + <span class="s3">&quot;</span><span class="s4">\n</span><span class="s3">&quot; </span>)
+num += <span class="s1">1</span>
+
+print(<span class="s3">&quot;Testing agent for 1000 steps with envState (Dirty Clean) and robot in A&quot;</span>)
+resetAgent()
+environmentState = [<span class="s3">&quot;Dirty&quot;</span>, <span class="s3">&quot;Clean&quot;</span>]
+percept = initialPercept(environmentState, <span class="s3">&quot;A&quot;</span>)
+print(<span class="s3">&quot;initial perception: &quot; </span>+ str(percept))
+
+<span class="s4">for </span>x <span class="s4">in </span>range(<span class="s1">0</span>,<span class="s1">1000</span>):
+    action = agentFunction(percept)
+    [envState, percept, performanceMeasure[num]] = updateEnvironment(environmentState,percept,action,performanceMeasure[num])
+print(<span class="s3">&quot;Final Performance Measure: &quot; </span>+ str(performanceMeasure[num]) + <span class="s3">&quot;</span><span class="s4">\n</span><span class="s3">&quot; </span>)
+num += <span class="s1">1</span>
+
+print(<span class="s3">&quot;Testing agent for 1000 steps with envState (Dirty Dirty) and robot in A&quot;</span>)
+resetAgent()
+environmentState = [<span class="s3">&quot;Dirty&quot;</span>, <span class="s3">&quot;Dirty&quot;</span>]
+percept = initialPercept(environmentState, <span class="s3">&quot;A&quot;</span>)
+print(<span class="s3">&quot;initial perception: &quot; </span>+ str(percept))
+
+<span class="s4">for </span>x <span class="s4">in </span>range(<span class="s1">0</span>,<span class="s1">1000</span>):
+    action = agentFunction(percept)
+    [envState, percept, performanceMeasure[num]] = updateEnvironment(environmentState,percept,action,performanceMeasure[num])
+print(<span class="s3">&quot;Final Performance Measure: &quot; </span>+ str(performanceMeasure[num]) + <span class="s3">&quot;</span><span class="s4">\n</span><span class="s3">&quot; </span>)
+num += <span class="s1">1</span>
+
+print(<span class="s3">&quot;Testing agent for 1000 steps with envState (clean clean) and robot in B&quot;</span>)
+resetAgent()
+environmentState = [<span class="s3">&quot;Clean&quot;</span>, <span class="s3">&quot;Clean&quot;</span>]
+percept = initialPercept(environmentState, <span class="s3">&quot;B&quot;</span>)
+print(<span class="s3">&quot;initial perception: &quot; </span>+ str(percept))
+
+<span class="s4">for </span>x <span class="s4">in </span>range(<span class="s1">0</span>,<span class="s1">1000</span>):
+    action = agentFunction(percept)
+    [envState, percept, performanceMeasure[num]] = updateEnvironment(environmentState,percept,action,performanceMeasure[num])
+print(<span class="s3">&quot;Final Performance Measure: &quot; </span>+ str(performanceMeasure[num]) + <span class="s3">&quot;</span><span class="s4">\n</span><span class="s3">&quot; </span>)
+num += <span class="s1">1</span>
+
+print(<span class="s3">&quot;Testing agent for 1000 steps with envState (clean Dirty) and robot in B&quot;</span>)
+resetAgent()
+environmentState = [<span class="s3">&quot;Clean&quot;</span>, <span class="s3">&quot;Dirty&quot;</span>]
+percept = initialPercept(environmentState, <span class="s3">&quot;B&quot;</span>)
+print(<span class="s3">&quot;initial perception: &quot; </span>+ str(percept))
+
+<span class="s4">for </span>x <span class="s4">in </span>range(<span class="s1">0</span>,<span class="s1">1000</span>):
+    action = agentFunction(percept)
+    [envState, percept, performanceMeasure[num]] = updateEnvironment(environmentState,percept,action,performanceMeasure[num])
+print(<span class="s3">&quot;Final Performance Measure: &quot; </span>+ str(performanceMeasure[num]) + <span class="s3">&quot;</span><span class="s4">\n</span><span class="s3">&quot; </span>)
+num += <span class="s1">1</span>
+
+print(<span class="s3">&quot;Testing agent for 1000 steps with envState (Dirty Clean) and robot in B&quot;</span>)
+resetAgent()
+environmentState = [<span class="s3">&quot;Dirty&quot;</span>, <span class="s3">&quot;Clean&quot;</span>]
+percept = initialPercept(environmentState, <span class="s3">&quot;B&quot;</span>)
+print(<span class="s3">&quot;initial perception: &quot; </span>+ str(percept))
+
+<span class="s4">for </span>x <span class="s4">in </span>range(<span class="s1">0</span>,<span class="s1">1000</span>):
+    action = agentFunction(percept)
+    [envState, percept, performanceMeasure[num]] = updateEnvironment(environmentState,percept,action,performanceMeasure[num])
+print(<span class="s3">&quot;Final Performance Measure: &quot; </span>+ str(performanceMeasure[num]) + <span class="s3">&quot;</span><span class="s4">\n</span><span class="s3">&quot; </span>)
+num += <span class="s1">1</span>
+
+print(<span class="s3">&quot;Testing agent for 1000 steps with envState (Dirty Dirty) and robot in B&quot;</span>)
+resetAgent()
+environmentState = [<span class="s3">&quot;Dirty&quot;</span>, <span class="s3">&quot;Dirty&quot;</span>]
+percept = initialPercept(environmentState, <span class="s3">&quot;B&quot;</span>)
+print(<span class="s3">&quot;initial perception: &quot; </span>+ str(percept))
+
+<span class="s4">for </span>x <span class="s4">in </span>range(<span class="s1">0</span>,<span class="s1">1000</span>):
+    action = agentFunction(percept)
+    [envState, percept, performanceMeasure[num]] = updateEnvironment(environmentState,percept,action,performanceMeasure[num])
+print(<span class="s3">&quot;Final Performance Measure: &quot; </span>+ str(performanceMeasure[num]) + <span class="s3">&quot;</span><span class="s4">\n</span><span class="s3">&quot; </span>)
+num += <span class="s1">1</span>
+
+averagePerformanceMeasure = <span class="s1">0</span>
+<span class="s4">for </span>x <span class="s4">in </span>range(<span class="s1">0</span>, len(performanceMeasure)):
+    averagePerformanceMeasure += performanceMeasure[x]
+
+averagePerformanceMeasure = averagePerformanceMeasure / len(performanceMeasure)
+print(<span class="s3">&quot;Average Performance Measure: &quot; </span>+ str(averagePerformanceMeasure))
+
+
+
+
+
+</pre>
+</body>
+</html>
